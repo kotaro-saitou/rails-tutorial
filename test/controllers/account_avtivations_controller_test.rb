@@ -1,0 +1,17 @@
+require 'test_helper'
+
+class AccountAvtivationsControllerTest < ActionDispatch::IntegrationTest
+  def edit
+    # params[:id] / params[:email]
+    user = USer.find_by(email: params[:email])
+    if user && !user.activated? && user.authenticated?(:activation, params[:id])
+      user.activate
+      log_in user
+      flash[:success] = "Account activated!"
+      redirect_to user
+    else
+      flash[:danger] = "Invalid activation link"
+      redirect_to root_url
+    end
+  end
+end
